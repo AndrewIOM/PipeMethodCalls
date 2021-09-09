@@ -94,7 +94,8 @@ namespace PipeMethodCalls
 				return TypedPipeResponse.Failure(request.CallId, $"Handler implementation returned null for interface '{typeof(THandling).FullName}'");
 			}
 
-			MethodInfo method = handlerInstance.GetType().GetMethod(request.MethodName);
+			MethodInfo method = handlerInstance.GetType().GetRuntimeMethods().FirstOrDefault(x => x.Name.Split('.').Last() == request.MethodName);
+			string methods = String.Concat(handlerInstance.GetType().GetRuntimeMethods().Select(m => m.Name));
 			if (method == null)
 			{
 				return TypedPipeResponse.Failure(request.CallId, $"Method '{request.MethodName}' not found in interface '{typeof(THandling).FullName}'.");
